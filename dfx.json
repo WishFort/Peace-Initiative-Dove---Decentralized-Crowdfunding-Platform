@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "charity_backend": {
+      "main": "src/charity_backend/main.mo",
+      "type": "motoko"
+    },
+    "charity_frontend": {
+      "dependencies": [
+        "charity_backend"
+      ],
+      "source": [
+        "src/charity_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "charity_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
