@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  font-size: 1.5rem;
+  background-color: #141416 !important;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.App{
+    margin: 0 !important;
+}
+.homepage{
+  background: linear-gradient(-45deg, #000000 0%, 
+  #0a0a0a 33%, 
+  #050505 66%, 
+  #000000 100%);  
+  display: flex;
+  background-size: 400% 400%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  animation: gradient 15s ease infinite; 
+} 
+
+
+
+@keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+.loading_screen{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loading_screen h1, .loading_screen p{
+  font-family: "Raleway", serif;
+}
+
+.loading_screen p{
+  color:#ffffff;
+  margin-top: 40px;
+}
+
+.loading_screen p.white-loading{
+  color:rgb(255, 255, 255) !important;
+}
+
+.loading_screen h1 {
+  font-weight: bolder;
+  margin-bottom: 40px;
+  color: #6bffe6;
+}
+
+.load-animation {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+.bar {
+  width: 10px;
+  height: 70px;
+  background: #fff;
+  display: inline-block;
+  transform-origin: bottom center;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  /*   box-shadow:5px 10px 20px inset rgba(255,23,25.2); */
+  animation: loader 1.2s linear infinite;
+  margin: 50px 0;
+}
+.bar1 {
+  animation-delay: 0.1s;
+}
+.bar2 {
+  animation-delay: 0.2s;
+}
+.bar3 {
+  animation-delay: 0.3s;
+}
+.bar4 {
+  animation-delay: 0.4s;
+}
+
+@keyframes loader {
+  0% {
+    transform: scaleY(0.1);
+    background: rgb(6, 181, 187);
+  }
+  50% {
+    transform: scaleY(1);
+    background: rgb(6, 100, 129);
+  }
+  100% {
+    transform: scaleY(0.1);
+    background: transparent;
+  }
+}
+
+
+/* Homepage Company Title  CSS */
+.company-name-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Raleway', serif;
+    font-size: clamp(100px, 200px, 300px);
+    color: aliceblue;
+    gap:clamp(5px, 7px, 10px);
+
+}
+
+.subtext-company-name{
+    font-size: clamp(15px, 25px, 50px);
+}
+/* Utility Classes */
+.no-select{
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.large-letter-spacing{
+    letter-spacing: clamp(0.2rem, 0.5rem, 1rem);
+}
+
+/* Login Button CSS */
+.login-button-container{
+  display: flex;
+  width: 100%;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20rem;
+  margin-top: 30rem;
+}
+
+.login-btn {
+  background: linear-gradient(to right, #000000 0%, 
+  #0a0a0a 33%, 
+  #050505 66%, 
+  #000000 100%);
+  background-size: 400% 400%;
+  border-radius: 0.1em;
+  box-shadow:
+    inset 0px -6px 18px -6px rgba(255, 255, 255, 0),
+    inset rgb(255, 255, 255) -1px -1px 6px 0px,
+    inset 12px 0px 12px -6px rgba(3, 15, 20, 0),
+    inset -12px 0px 12px -6px rgba(3, 15, 20, 0),
+    rgb(197, 197, 197) -1px -1px 6px 0px;
+  border: solid 2px #030f14;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0.5rem 1rem;
+  outline: none;
+  transition: cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  animation: gradient 15s ease infinite;
+  width: 400px;
+  height: 120px;
+  }
+
+
+  .login-btn:hover {
+    box-shadow:
+      inset 0px -6px 18px -6px rgb(170, 170, 170),
+      inset 0px 6px 18px -6px rgb(194, 194, 194),
+      inset 12px 0px 12px -6px rgba(211, 210, 210, 0),
+      inset -12px 0px 12px -6px rgba(233, 230, 230, 0),
+      -1px -1px 6px 0px rgb(253, 253, 253);
+  }
+  
+  .login-btn:active {
+    box-shadow:
+      inset 0px -12px 12px -6px rgba(3, 15, 20, 1),
+      inset 0px 12px 12px -6px rgba(3, 15, 20, 1),
+      inset 12px 0px 12px -6px rgba(3, 15, 20, 1),
+      inset -12px 0px 12px -6px rgba(3, 15, 20, 1),
+      -1px -1px 6px 0px rgba(54, 69, 75, 1);
+  }
+  
+  .login-btn:hover{
+    transform: scale(0.9);
+  }
+  
+  .login-btn-text {
+    color: #ffffff;
+    font-weight: 500;
+    margin: auto;
+    transition: cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s;
+    width: fit-content;
+    font-family: "Raleway", serif;
+    line-height: 2;
+  }
+  
+  .login-btn:hover .login-btn-text {
+    transform: scale(0.9);
+    color:white;
+  }
+  
+  .login-btn:active .login-btn-text {
+    transform: scale(0.8);
+  }
+
+  /*Responsiveness Login Button*/
+
+  @media(max-width: 1450px) {
+     .login-button-container{
+      margin-bottom: 15rem;
+     }
+  }
+
+  @media (max-width: 1024px) {
+    .login-btn{
+      width: 360px;
+      height: 110px;
+      font-size: 17px;
+    }
+
+    .login-button-container{
+      margin-bottom: 5rem;
+      margin-top: 32rem;
+    }
+
+    .login-btn-logo{
+      height: 45px;
+    }
+  }
+
+  @media(max-width: 768px){
+    .login-btn{
+      width: 320px;
+      height: 90px;
+      font-size: 16px;
+      padding: 0.6rem 1.2rem;
+    }
+
+    .login-button-container{
+      margin-bottom: 12rem;
+      margin-top: 46rem;
+    }
+
+    .login-btn-logo{
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 480px){
+    .login-btn{
+      width: 280px;
+      height: 80px;
+      font-size: 15px;
+      padding: 0.5rem 1rem;
+    }
+
+    .login-button-container{
+      margin-bottom: 6rem;
+      margin-top: 45rem;
+    }
+
+    .login-btn-logo{
+      height: 30px;
+      margin-right: 6px;
+    }
+  } 
+  
+  @media(max-width: 430px){
+    .login-button-container{
+      margin-top: 50rem;
+    }
+  }
+
+  @media(max-width: 380px){
+    .login-button-container{
+      margin-bottom: 3rem;
+      margin-top: 43rem;
+    }
+
+    .login-btn-logo{
+      height: 25px;
+    }
+  }
+
+ 
+
+  
+  @media(max-height: 500px) and (orientation : landscape){
+    .login-btn{
+      width: 280px;
+      height: 70px;
+    }
+
+    .login-button-container{
+      margin-bottom: 8rem;
+      margin-top: 8rem;
+    }
+  }
+
+  @media (min-width: 280px) and (max-width: 400px) and (min-height: 800px){
+    .login-button-container{
+      margin-top: 45rem;
+    }
+  }
+
+  @media (min-width: 1000px) and (max-width: 1024px) and (max-width: 600px){
+    .login-button-container{
+      margin-top: 35px;
+    }
+  }
