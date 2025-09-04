@@ -44,7 +44,7 @@ function Header(){
                 <Route exact path="/">
                     {identity && principal ? 
                     <div style={{width: "100%", height: "100vh"}}>
-                        <Canvas camera={{position: [0,0,5.5]}} className="homepage">
+                        <Canvas camera={{position: [0,0,5.5], fov: 45}} className="homepage">
                             <Suspense fallback={<LoadingScreen/>}>
                                 <CharityHomePage userPrincipal={principal} agent={agent} />
                             </Suspense>

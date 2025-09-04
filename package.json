@@ -17,6 +17,11 @@
   ],
   "dependencies": {
     "@dfinity/agent": "^3.2.2",
-    "@dfinity/auth-client": "^3.2.2"
+    "@dfinity/auth-client": "^3.2.2",
+    "dat.gui": "^0.7.9",
+    "gsap": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/dat.gui": "^0.7.13"
   }
 }

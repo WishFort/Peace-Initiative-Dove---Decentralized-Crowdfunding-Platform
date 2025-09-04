@@ -1,5 +1,5 @@
-import { ScreenSizer, useScroll } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
+import { ScreenSizer, useCursor, useScroll } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
 import React, { useEffect, useMemo, useState, useRef} from "react";
 import * as THREE from "three";
 
@@ -7,7 +7,10 @@ function Item(props){
 
     const {size, viewport} = useThree();
     const [isMobile, setIsMobile] = useState();
+    const {camera} = useThree();
     const itemRef = useRef();
+    const [hovered, setHovered] = useState(false);
+    useCursor(hovered);
 
     const {width, height, ratio} = useMemo(() => {
         let width = 4;
@@ -23,17 +26,21 @@ function Item(props){
         return {width, height, ratio}
     }, []);
 
+    useEffect(() => {
+        if(itemRef.current){
+            // card looks at origin
+            // [0,0,0]
+            itemRef.current.lookAt(0, itemRef.current.position.y, 0);
+            itemRef.current.rotateY(Math.PI); 
+        }
+    }, []);
+
     return(
         <mesh 
         ref={itemRef}
-        onPointerEnter={() => {
-            document.body.style.cursor="pointer";
-        }}
-        onPointerLeave={() => {
-            document.body.style.cursor="default";
-        }}
         position={props.position}
-        rotation={props.rotation}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
         >
             <planeGeometry args={[width * ratio, height * ratio, 32, 32]}/>
             <meshStandardMaterial map={props.map} side={THREE.DoubleSide}/>
