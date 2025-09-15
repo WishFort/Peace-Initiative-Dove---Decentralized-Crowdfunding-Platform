@@ -10,7 +10,7 @@ function LoginHomePage(props){
 
     const {size, viewport} = useThree();
 
-    const baseWidth = 700;
+    const baseWidth = 500;
     const scaleFactor = Math.min(1, size.width/baseWidth);
 
     const textScale= 0.2 * scaleFactor;

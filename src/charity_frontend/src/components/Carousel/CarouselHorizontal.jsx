@@ -1,19 +1,38 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import CarouselItem from "./CarouselItem";
-import { useTexture } from "@react-three/drei";
+import { Html, useCursor, useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { CarouselProvider, useCarousel } from "./Context";
 import gsap from "gsap";
 
 const charityLogos = [
-    "/charity_test_pic/Helper_Foundation.png",
-    "/charity_test_pic/GiveWell.png",
-    "/charity_test_pic/GiveDirectly.png",
-    "/charity_test_pic/TuringTrust.png",
-    "/charity_test_pic/Rainforest_Foundation_US.png",
-    "/charity_test_pic/FreedomOfPress.png",
+    "/charity_test_pic/HSD_Logo.png",
+    "/charity_test_pic/GW_Logo.png",
+    "/charity_test_pic/GD_Logo.png",
+    "/charity_test_pic/TT_Logo.png",
+    "/charity_test_pic/RF_Logo.png",
+    "/charity_test_pic/FOP_Logo.png",
 ];
+
+function formatSatoshi(satAmount){
+    if(typeof satAmount !== 'number' && isNaN(parseInt(satAmount))){
+        return "error getting funds raised"
+    }
+
+    const value = Number(satAmount);
+    if(value >= 1_000_000_000){
+        return (value/1_000_000_000).toFixed(2) + "B sats";
+    } else if(value >= 1_000_000){
+        return (value/1_000_000_000).toFixed(2) + "M sats";
+    } else if(value>1_000){
+        return (value/1_000).toFixed(2) + "k sats";
+    } else {
+        return value + " sats";
+    }
+}
+
+export {formatSatoshi}
 
 function CarouselHorizontal() {
     const groupRef = useRef();
@@ -25,7 +44,22 @@ function CarouselHorizontal() {
     const items = groupRef.current?.children || [];
     const totalItems = items?.length || 0;
 
-    const {settings, activeIndex} = useCarousel();
+    const [charityName, setCharityName] = useState("Freedom Of Press");
+    const [charityDescription, setCharityDescription] = useState("[Charity Name] works to [mission] in [location]. Since [year], we've [key achievement/service]. Our programs focus on [main areas] to help [beneficiaries]. We've [impact statistic] and continue growing our reach. Your support through donations or volunteering helps us [specific impact]. Join us in [call to action]. [Tax-deductible/percentage to programs statement].");
+    const [charityRaisedAmount, setCharityRaisedAmount] = useState(100_000);
+    
+    const [showDonate, setShowDonate] = useState();
+    const [donationAmount, setDonationAmount] = useState(null);
+    const [confirmText, setConfirmText] = useState("Confirm");
+    
+
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        setIsMobile(viewport.width < viewport.height);
+    }, [viewport.width, viewport.height]);
+
+
+    const {settings, activeIndex, setActiveIndex} = useCarousel();
 
     function handleWheel(e) {
         if(activeIndex !== null) return;
@@ -39,7 +73,9 @@ function CarouselHorizontal() {
         progressRef.current = newProgress;
     }
 
+    const [stateCenterIndex, setCenterIndex] = useState(0);
     useFrame(() => {
+
         const rawProgress = progressRef.current;
         const scrollSpeed = rawProgress - prevProgressRef.current;
         scrollSpeedRef.current = scrollSpeed;
@@ -53,6 +89,9 @@ function CarouselHorizontal() {
         // calculate center index & distance
         const fraction=(progress/100) * (totalItems-1);
         const centerIndex = Math.round(fraction);
+        if(stateCenterIndex != centerIndex){
+            setCenterIndex(centerIndex);
+        }
 
         items.forEach((item, i) => {
             // if centerIndex=1
@@ -66,7 +105,7 @@ function CarouselHorizontal() {
             const y = -distance * (settings.height + settings.itemGap);
             const z = Math.abs(distance) * 0.5; // z = 0 if center, z=0.5 if 1 above, further away from center larger - z
             const scale = distance === 0 ? 2.5 : 1.7; // larger scale for card at center
-            item.visible = Math.abs(distance) <= 3; // only 3 items visible at a time
+            item.visible = Math.abs(distance) <= 1; // only 3 items visible at a time
             if(activeIndex !== null){ // only show selected image when in select mode
                 item.visible=activeIndex===i;
             }
@@ -112,22 +151,80 @@ function CarouselHorizontal() {
 
             material.uniforms.uTime.value = performance.now() / 1000; // get seconds from page load
            
+            const tl=gsap.timeline();
+            const htmlOverlayLeft=activeIndex !== null ? (isMobile ? "0vw" : "-30vw") : "-100vw";
+            const htmlOverlayOpacity = activeIndex !== null ? 1 : 0;
+            if(!groupRef.current) return;
+            tl.to(groupRef.current.rotation, {
+                x: settings.rotation[0],
+                y: settings.rotation[1],
+                z: settings.rotation[2],
+                duration: 0.8,
+                ease: "power3.out"
+            }).to(groupRef.current.position,{
+                x:settings.position[0],
+                y: settings.position[1],
+                z: settings.position[2],
+                duration: 0.8,
+                ease: "power3.out" 
+            }).to(htmlOverlayRef.current, {
+                x:htmlOverlayLeft,
+                opacity: htmlOverlayOpacity
+            }, "<-0.3"); // <-0.3 seconds befor position interpolation finishes overlay starts
 
         })
     });
 
+    const htmlOverlayRef=useRef();
+
     return (
-        <group>
-            <mesh onWheel={handleWheel} position={[0,0,-0.01]}>
-                <planeGeometry args={[viewport.width, viewport.height]}/>
-                <meshBasicMaterial transparent opacity={0}/>
-            </mesh>
-            <group ref={groupRef}>
-                {textures.map((texture, i) => {
-                    return(<CarouselItem texture={texture} key={i} index={i}/>);
-                })}
+        <>
+         <Html center style={{pointerEvents: "none"}}>
+            <div ref={htmlOverlayRef} className="outer-html-container absolute z-100 top-0 left-0 w-full"
+                style={{transform: "translateX(-100vw)", opacity:0, pointerEvents: activeIndex !==null ? "auto": "none"}}
+            >
+              <div className="charity-info-container">
+                <h1 className={"charity-name"}>{charityName}</h1>
+                <div className={"charity-raised"}>Amount Raised: <span className="bold">{formatSatoshi(charityRaisedAmount)}</span></div>
+                <div className={"charity-description"}>{charityDescription}</div>
+              </div>
+                <div className={`charity-button-container ${isMobile ? "mobile-charity-button-container-override": ""} `}>
+                    <div className={`donate-button ${showDonate ? "donate-button-active" : ""}`} onClick={() => setShowDonate(true)}>Donate</div>
+                </div> 
+                {isMobile && activeIndex !== null &&  <div className="return-button-container">
+                    <div className={"donate-button return-button-override"} onClick={() => setActiveIndex(null)}>Return Home</div>
+                </div>}
+            </div>
+           
+         </Html>
+         {showDonate && activeIndex !== null &&  <Html center>
+                <div className={"donate-container"}>
+                    <div className="charity-raised donation-text-override">Donation</div>
+                    <input  
+                         type="number"
+                         className="input-donation"
+                         min="1"
+                         placeholder="Amount in Satoshi"
+                         value={donationAmount}
+                         onChage={(e) => setDonationAmount(e.target.value)}
+                        />
+                    <div className="donate-button confirm-button-override">{confirmText}</div>
+
+                </div>
+         </Html>}
+            <group
+            >
+                <mesh onWheel={handleWheel} position={[0,0,-0.01]}>
+                    <planeGeometry args={[viewport.width, viewport.height]}/>
+                    <meshBasicMaterial transparent opacity={0}/>
+                </mesh>
+                <group ref={groupRef}>
+                    {textures.map((texture, i) => {
+                        return(<CarouselItem texture={texture} centerIndex={stateCenterIndex} key={i} index={i} resetShowDonateState={() => setShowDonate(false)}/>);
+                    })}
+                </group>
             </group>
-        </group>
+        </>
     )
 }
 
