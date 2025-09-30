@@ -5,6 +5,22 @@ import { shaderMaterial, useCursor, Html } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import gsap from "gsap";
 import { formatSatoshi } from "./CarouselHorizontal";
+import { atom, useAtom } from "jotai";
+import { selectedNameAtom } from "./CarouselHorizontal";
+import { dove } from "../../../../declarations/dove";
+import { Actor } from "@dfinity/agent";
+import { idlFactory } from "../../../../declarations/charity";
+import { Prev } from "react-bootstrap/esm/PageItem";
+
+
+export const isLoadingAtom = atom((get) => {
+    const loadingStates = get(loadingStatesAtom);
+
+    return Object.values(loadingStates).some((loadingState) => loadingState == true);
+});
+export const loadingStatesAtom = atom({});
+
+export const isActiveHeaderAtom = atom(false);
 
 function CarouselItem(props) {
 
@@ -17,14 +33,47 @@ function CarouselItem(props) {
 
     const {viewport}= useThree();
     
-    const [raisedAmount, setRaisedAmount] = useState(0);
+    const [raisedAmount, setRaisedAmount] = useState("");
+    const [charityGoal, setCharityGoal] = useState("")
 
-    const satAmount = props.index * 50_000;
-    const formattedSatAmount = formatSatoshi(satAmount).split(" ")[0];
+   const [selectedName, setSelectedName] = useAtom(selectedNameAtom);
+   const [isLoading] = useAtom(isLoadingAtom);
+   const [loadingStates, setLoadingStates] = useAtom(loadingStatesAtom);
+   const [isActiveHeader, setIsActiveHeader] = useAtom(isActiveHeaderAtom)
 
-    useState(() => {
-        
-    }, []);
+   useEffect(() => {
+     async function fetchData(){
+        setLoadingStates((prev) => {
+                              //[] needed to get value of key
+                              // objects in JS would treat props.name as a literal resulting in a key "props.name": true
+                              // instead we need [name_of_charity] : true
+                              // also JS does not know how to interpret unquoted literals with dot
+            return ({...prev, [props.name] : true})
+        });
+        const {ok: charityCanisterId, err: errMsg} = await dove.getCharityCanister(props.name);
+        if(charityCanisterId !== undefined){
+            console.log("Agent", props.agent);
+            let charityCanister = Actor.createActor(idlFactory, {
+                agent: props.agent,
+                canisterId: charityCanisterId
+            });
+            const {ok:charityBalance, err:errMsg} = await charityCanister.getBalance();
+            if(charityBalance !== undefined){
+                setRaisedAmount(formatSatoshi(charityBalance));
+                setLoadingStates((prev) => {
+                    // overwrite existing props.name key
+                    return ({...prev, [props.name]: false})
+                })
+            } else {
+                console.error("Charity Canister Balance could not be retrieved:", errMsg);
+            }
+            
+        } else {
+            console.error("Error getting charity canister id:", errMsg);
+        }
+     }
+     fetchData()
+   }, []);
 
     useEffect(() => {
         setIsActive(activeIndex==props.index);
@@ -139,8 +188,11 @@ function CarouselItem(props) {
             onClick={() => {
                 if(isActive){
                     setActiveIndex(null);
+                    setIsActiveHeader(false);
                 } else {
                     setActiveIndex(props.index);
+                    setSelectedName(props.name);
+                    setIsActiveHeader(true);
                 }
                 props.resetShowDonateState();
             }}
@@ -152,9 +204,9 @@ function CarouselItem(props) {
                 <planeGeometry args={[width * (isMobile ? 0.75 : 1), height * (isMobile ? 0.75 : 1), 32, 32]}/>
                 <shaderMaterial args={[shaderArgs]}/>           
             </mesh>
-            {props.index == props.centerIndex && activeIndex == null && <Html position-x={isMobile ? -0.75 : -4}>
+            {props.index == props.centerIndex && activeIndex == null && !isLoading &&  <Html position-x={isMobile ? -0.75 : -4}>
                 <div className="supporting-text-charity">
-                    {formattedSatAmount}
+                    {raisedAmount}
                 </div>
             </Html>}
         </group>

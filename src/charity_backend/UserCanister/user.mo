@@ -27,11 +27,41 @@ persistent actor class UserCanister(owner: Principal, registry: Principal) = thi
         }
     };
 
+    public shared(msg) func sendBTC(charityCanister : Principal, price: Nat) : async Text{
+        try{
+            let recipient : Account = {
+                owner=charityCanister;
+                subaccount=null;
+            };
+
+            let transferArgs = {
+                from_subaccount = null;
+                to=recipient;
+                amount=price;
+                fee=null;
+                memo=null;
+                created_at_time=null;
+            };
+            
+            let result = await lckBTCLedger.icrc1_transfer(transferArgs);
+            switch(result){
+                case(#Ok(_)){
+                    return "Success";
+                };
+                case(#Err(err)){
+                    return "Transfer ckBTC failed:" # debug_show(err);
+                };
+            }
+        } catch (err){
+            return "Error sending BTC: " # Error.message(err);
+        }
+    };
+
     public query func getFundingAddress() :  async Text{
         return fundingAddr;
     };
 
-    public query func getWithdrawalAddress() : async Text{
+    public shared(msg) func getWithdrawalAddress() : async Text{
         if(Principal.equal(msg.caller, owner)){
             return withdrawalAddress;
         } else {

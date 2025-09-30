@@ -143,7 +143,7 @@ export const CarouselProvider : React.FC<{children : ReactNode}> = ({children}) 
     }
 
     useEffect(() => {
-      initGUI();
+      //initGUI();
 
       return () => {
         if(gui){

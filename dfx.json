@@ -1,18 +1,46 @@
 {
   "canisters": {
-    "charity_backend": {
-      "main": "src/charity_backend/main.mo",
+    "dove": {
+      "main": "src/charity_backend/Dove/main.mo",
       "type": "motoko"
+    },
+    "charity": {
+      "main": "src/charity_backend/CharityCanister/charity.mo",
+      "type": "motoko"
+    },
+    "user": {
+      "main": "src/charity_backend/UserCanister/user.mo",
+      "type": "motoko",
+      "dependencies": [
+        "icrc1_ledger"
+      ]
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
+    "icrc1_ledger": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/95787355499f3be929f2ab302ed44cdad7c64061/rs/rosetta-api/icrc1/ledger/ledger.did",
+      "wasm": "https://download.dfinity.systems/ic/95787355499f3be929f2ab302ed44cdad7c64061/canisters/ic-icrc1-ledger.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "mxzaz-hqaaa-aaaar-qaada-cai"
+        }
+      }
+    },
+    "ckbtc_minter": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/95787355499f3be929f2ab302ed44cdad7c64061/rs/bitcoin/ckbtc/minter/ckbtc_minter.did",
+      "wasm": "https://download.dfinity.systems/ic/95787355499f3be929f2ab302ed44cdad7c64061/canisters/ic-ckbtc-minter.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "mqygn-kiaaa-aaaar-qaadq-cai"
+        }
+      }
+    },
     "charity_frontend": {
-      "dependencies": [
-        "charity_backend"
-      ],
       "source": [
         "src/charity_frontend/dist"
       ],
@@ -23,7 +51,7 @@
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
+      "packtool": "mops sources"
     }
   },
   "output_env_file": ".env",

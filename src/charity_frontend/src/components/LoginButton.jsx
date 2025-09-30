@@ -32,7 +32,7 @@ function LoginButton(props){
                 });
             }
         } catch(err){
-            console.log("Login Error");
+            console.log("Login Error", err);
         }
     }
 

@@ -1,10 +1,17 @@
+TO GENERATE DECLERATIONS RUN: npm run prebuild
+
 # `charity`
+
+test-principal: 
+dfx ledger fabricate-cycles --canister dove
 
 # Adding Models
 npx gltfjsx src/charity_frontend/assets/models/Cash.glb -o src/charity_frontend/src/components/Cash.jsx
 
 npx gltfjsx src/charity_frontend/assets/models/Peace.glb -o src/charity_frontend/src/components/Peace.jsx
 
+
+dfx deploy ckbtc_minter --argument '(variant { Init = record { kyt_principal = opt principal "be2us-64aaa-aaaaa-qaabq-cai"; ecdsa_key_name = "dfx_test_key"; mode = variant { GeneralAvailability }; retrieve_btc_min_amount = 1_000 : nat64; ledger_id = principal "mxzaz-hqaaa-aaaar-qaada-cai"; max_time_in_queue_nanos = 600_000_000_000 : nat64; btc_network = variant { Regtest }; min_confirmations = null; kyt_fee = null; } })' --network local
 
 Welcome to your new `charity` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
 
