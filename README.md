@@ -1,4 +1,9 @@
-TO GENERATE DECLERATIONS RUN: npm run prebuild
+
+## About This Project
+
+This project was created for the US Peace Initiative to support and advance the United Nations Sustainable Development Goals (SDGs). By leveraging blockchain technology on the Internet Computer Protocol, this platform aims to provide transparent, efficient, and accessible charitable giving solutions that contribute to global peace and sustainable development efforts.
+
+# TO GENERATE DECLERATIONS RUN: npm run prebuild
 
 # `charity`
 
