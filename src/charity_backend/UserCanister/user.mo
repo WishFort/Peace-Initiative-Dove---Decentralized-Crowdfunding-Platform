@@ -29,6 +29,19 @@ persistent actor class UserCanister(owner: Principal, registry: Principal) = thi
 
     public shared(msg) func sendBTC(charityCanister : Principal, price: Nat) : async Text{
         try{
+            let balance : Nat = switch(await getBalance()){
+                case(#ok(balanceVal)){
+                    balanceVal;
+                };
+                case(#err(e)){
+                    return "Error getting balance:" # debug_show(e);
+                }
+            };
+
+            if(balance < 10 or (balance - 10) < price){
+                return "Insufficient Balance";
+            };
+
             let recipient : Account = {
                 owner=charityCanister;
                 subaccount=null;

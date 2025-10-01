@@ -28,10 +28,11 @@ function formatSatoshi(satAmount){
     }
 
     const value = Number(satAmount);
+    console.log("Sat amount:", satAmount);
     if(value >= 1_000_000_000){
         return (value/1_000_000_000).toFixed(2) + "B sats";
     } else if(value >= 1_000_000){
-        return (value/1_000_000_000).toFixed(2) + "M sats";
+        return (value/1_000_000).toFixed(2) + "M sats";
     } else if(value>1_000){
         return (value/1_000).toFixed(2) + "k sats";
     } else {
@@ -59,7 +60,7 @@ function CarouselHorizontal(props) {
     
     const [showDonate, setShowDonate] = useState();
     const [donationAmount, setDonationAmount] = useState(null);
-    const [confirmText, setConfirmText] = useState("Confirm");
+    const [confirmText, setConfirmText] = useState("Donate");
     
 
     const [isMobile, setIsMobile] = useState(false);
@@ -186,9 +187,11 @@ function CarouselHorizontal(props) {
 
     const [selectedName,setSelectedName] = useAtom(selectedNameAtom);
     const [charityCanisterId, setCharityCanisterId] = useState();
+    const [charityGoalComplete, setCharityGoalComplete] = useState(false);
     useEffect(() => {
         async function fetchCharityData(){
            const {ok: canisterId, err: errMsg} = await dove.getCharityCanister(selectedName);
+           setCharityCanisterId(canisterId);
             if(canisterId !== undefined){
                 console.log("agent:", props.agent);
                 let charityCanister = Actor.createActor(idlFactory, {
@@ -200,6 +203,8 @@ function CarouselHorizontal(props) {
                 const charityDescriptionVal = await charityCanister.getDescription();
                 const charityWebsiteLink = await charityCanister.getWebsiteLink();
                 const charityGoalVal = await charityCanister.getCharityGoal();
+
+                setCharityGoalComplete(charityBalance >= charityGoalVal);
 
                 if(charityBalance !== undefined){
                     setCharityRaisedAmount(formatSatoshi(charityBalance));
@@ -239,19 +244,28 @@ function CarouselHorizontal(props) {
             agent: props.agent,
             canisterId: props.userCanisterId
         });
-        const result = await authUserCanister.sendBTC(donationAmount);
+        const result = await authUserCanister.sendBTC(charityCanisterId, Number(donationAmount));
         if(result == "Success"){
             const authCharity = Actor.createActor(idlFactory, {
                 agent: props.agent,
                 canisterId: charityCanisterId
             });
+            const resultAddDonor = await authCharity.addDonor();
+            console.log("Result adding donor:", resultAddDonor);
             const resultUpdate = await authCharity.updateBalance();
             console.log("Result of charity update,:", resultUpdate);
-            setShowSuccess() 
+            setShowSuccess(true);
+            setConfirmText("Return Home"); 
         } else {
             setConfirmText(result);
         }
         setLoaderHidden(true);
+    }
+
+    function handleHome(){
+        setShowSuccess(false);
+        setDonationAmount("");
+        setActiveIndex(null);
     }
 
     // Donation Logic
@@ -260,28 +274,21 @@ function CarouselHorizontal(props) {
 
     return (
         <>
-        {!loaderHidden && <Html center>
-                    <div className="lds-ellipsis">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                    </div>
-                </Html>}
+        
          <Html center style={{pointerEvents: "none"}}>
             <div ref={htmlOverlayRef} className="outer-html-container absolute z-100 top-0 left-0 w-full"
                 style={{transform: "translateX(-100vw)", opacity:0, pointerEvents: activeIndex !==null ? "auto": "none"}}
             >
               <div className="charity-info-container">
                 <h1 className={"charity-name"}>{charityName}</h1>
-                <div className={"charity-raised"}>Amount Raised: <span className="bold">{charityRaisedAmount}/{charityGoal}</span></div>
+                <div className={"charity-raised"}>{charityGoalComplete ? ("Goal Complete"):(<>Amount Raised: <span className="bold">{charityRaisedAmount}/{charityGoal}</span></>)}</div>
                 <div className={"charity-description"}>{charityDescription}</div>
                 <hr/>
                 <div className="charity-description link" onClick={handleRedirect}>{charityWebsite}</div>
               </div>
-                <div className={`charity-button-container ${isMobile ? "mobile-charity-button-container-override": ""} `}>
+                {!charityGoalComplete && <div className={`charity-button-container ${isMobile ? "mobile-charity-button-container-override": ""} `}>
                     <div className={`donate-button ${showDonate ? "donate-button-active" : ""}`} onClick={() => setShowDonate(true)}>Donate</div>
-                </div> 
+                </div>}
                 {isMobile && activeIndex !== null &&  <div className="return-button-container">
                     <div className={"donate-button return-button-override"} onClick={() => setActiveIndex(null)}>Return Home</div>
                 </div>}
@@ -291,26 +298,39 @@ function CarouselHorizontal(props) {
          {showDonate && activeIndex !== null && !showSuccess &&  <Html center>
                 <div className={"donate-container"}>
                     <div className="charity-raised donation-text-override">Donation</div>
-                    <input  
+                    {!loaderHidden && <div className="lds-ellipsis">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>}
+                    {loaderHidden && <input  
                          type="number"
                          className="input-donation"
                          min="1"
                          placeholder="Amount in Satoshi"
                          value={donationAmount}
-                         onChage={(e) => setDonationAmount(e.target.value)}
-                        />
-                    <div className="donate-button confirm-button-override" onClick={handleDonation}>{confirmText}</div>
+                         onChange={(e) => setDonationAmount(e.target.value)}
+                        />}
+                    {confirmText == "Donate" && <div className="donate-button confirm-button-override" onClick={() => setConfirmText("Confirm")}>{confirmText}</div>}
+                    {confirmText !== "Donate" && <div className="donate-button confirm-button-override" onClick={handleDonation}>{confirmText}</div>}
 
                 </div>
+                
          </Html>}
 
          {activeIndex !== null && showSuccess &&  <Html center>
                 <div className={"donate-container"}>
                     <div className="charity-raised donation-text-override">Successfully donated {formatSatoshi(donationAmount)}</div>
-                    <div className="donate-button confirm-button-override" onClick={handleDonation}>{confirmText}</div>
-
+                    <div className="donate-button confirm-button-override" onClick={handleHome}>{confirmText}</div>
+                    
                 </div>
+                
          </Html>}
+         {/* Sort Z-elements based on depth */}
+         {<Html center zIndexRange={[100,100]}>
+                    
+                </Html>}
             <group
             >
                 <mesh onWheel={handleWheel} position={[0,0,-0.01]}>

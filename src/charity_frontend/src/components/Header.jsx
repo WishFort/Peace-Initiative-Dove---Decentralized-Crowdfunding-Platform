@@ -15,7 +15,7 @@ import { isLoadingAtom } from "./Carousel/CarouselItem";
 import { useAtom } from "jotai";
 import { isActiveHeaderAtom } from "./Carousel/CarouselItem";
 
-const isICNetwork = true;
+const isICNetwork = false;
 
 function Header(){
 

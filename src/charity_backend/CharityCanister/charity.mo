@@ -52,10 +52,10 @@ persistent actor class CharityCanister(name: Text, btcAddress: Text, description
     public shared(msg) func updateBalance() : async Text{
         switch(await getBalance()){
             case(#ok(balance)){
-                if(balance > charityGoal){
+                if(balance >= charityGoal){
                     let resultRedistribute = await redistributeFunds(balance);
                     let resultWithdraw = await withdraw();
-                    return "Update of Balance Possible Success: Withdraw:" # resultWithdraw # " Redistribute: " # resultRedistribute;
+                    return "Update of Balance Possible Success: Withdraw:" # " Redistribute: " # resultRedistribute;
                 } else {
                     return "Not time yet for redistribution and withdrawal";
                 }

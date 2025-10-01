@@ -35,6 +35,8 @@ function Profile(props){
          console.log(balance);
          console.log(errMsg);
          if(balance !== undefined){
+            const formattedBalance = formatSatoshi(balance);
+            console.log("Formatted balance:", formattedBalance);
             setUserBalance(formatSatoshi(Number(balance)));
          } else {
             console.error("Could not get balance from canister:", errMsg);
@@ -69,6 +71,8 @@ function Profile(props){
             agent:props.agent,
             canisterId:props.userCanisterId
         });
+
+        // FUTURE IMPLEMENTATION: should use regex matching for new withdrawal addr to ensure that valid BTC addresses are entered
         const result = await authCanister.setWithdrawalAddress(newWithdrawalAddr);
         if(result=="Success"){
             setWithdrawalAddr(newWithdrawalAddr);

@@ -381,7 +381,7 @@ body {
 
   .donate-button{
     background-color: whitesmoke;
-    border-radius: 4px;
+    border-radius: 1px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -407,25 +407,25 @@ body {
     align-items: center;
     flex-direction: column;
     gap:10px;
-    background-color: rgba(255, 251, 251, 0.705);
+    background-color: rgb(12,12 ,12, 0.71);
     border-radius: 4px;
     padding: 15px;
   }
 
   .confirm-button-override{
     margin-top: clamp(5px,10px,15px);
-    background-color: #C6D870 !important;
-    font-size: clamp(1rem,2rem,3rem);
+    background-color:  #a7b175 !important;
+    font-size: clamp(1rem,1.5rem,3rem);
     padding: 10px;
   }
 
   .confirm-button-override:hover{
-    background-color: #556B2F !important;
+    background-color: rgb(57, 71, 31) !important;
     transform: translateY(-1px);
   }
 
   .donation-text-override{
-     background: linear-gradient(135deg, #092635, #323636, #343837, #1f2020) !important;
+     background: linear-gradient(135deg, #343837, #d2d3be, #cdcdcd, #dae1b3, #859595) !important;
      -webkit-background-clip: text !important;
      color: transparent !important;
      font-size:clamp(1rem,1.9rem,3rem);
@@ -435,10 +435,11 @@ body {
   .input-donation{
     width: 60%;
     padding: 12px 16px;
+    background-color: #000000;
     border: 1px solid #e5e7eb;
     border-radius: 4px;
-    font-size: clamp(1rem,2rem,3rem);
-    color: #222831;
+    font-size: clamp(1rem, 1.2rem, 3rem);
+    color: #ffffff;
     outline: none;
     transition: 0.2s all ease;
 
@@ -460,8 +461,9 @@ body {
   }
 
   .return-button-override{
-    background-color: #8C1007;
+    background-color: #893c36;
     color: white;
+    font-size: clamp(1rem, 1.5rem, 3rem);
   }
 
   .return-button-override:hover{
@@ -547,7 +549,7 @@ body {
 .address{
   font-size: clamp(0.75rem, 1.2rem, 3rem);
   font-family: 'Raleway', serif;
-  color:#222831;
+  color:#e3e5d6;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -568,13 +570,13 @@ body {
 
  .set-button-override{
     margin-top: clamp(5px,10px,15px);
-    background-color: #e9c152 !important;
-    font-size: clamp(1rem,2rem,3rem);
+    background-color: #e5e0d3 !important;
+    font-size: clamp(1rem,1.5rem,3rem);
     padding: 10px 20px;
   }
 
   .set-button-override:hover{
-    background-color: #80551e !important;
+    background-color: #a8a59c !important;
     transform: translateY(-1px);
   }
 
@@ -593,7 +595,7 @@ body {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #fff;
+  background: rgb(0, 0, 0) !important;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {

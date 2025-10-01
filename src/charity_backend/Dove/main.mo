@@ -46,6 +46,23 @@ persistent actor Dove{
   public shared(msg) func resetUserCanister() : async Text{
     if(Principal.equal(msg.caller, Principal.fromText(ADMIN_PRINCIPAL))){
        mapOfUserCanisters := StableHashMap.StableHashMap<Principal, Principal>(1, Principal.equal, Principal.hash);
+       return "Success";
+    } else{
+      return "Unauthorized";
+    }
+  };
+
+  public shared(msg) func fullResetUser() : async Text{
+    if(Principal.equal(msg.caller, Principal.fromText(ADMIN_PRINCIPAL))){
+       mapOfUserCanisters := StableHashMap.StableHashMap<Principal, Principal>(1, Principal.equal, Principal.hash);
+       return "Success";
+    } else{
+      return "Unauthorized";
+    }
+  };
+
+   public shared(msg) func fullResetCharity() : async Text{
+    if(Principal.equal(msg.caller, Principal.fromText(ADMIN_PRINCIPAL))){
        mapOfCharityCanisters := StableHashMap.StableHashMap<Nat, CharityCanister>(1,Nat.equal, Hash.hash);
        return "Success";
     } else{
